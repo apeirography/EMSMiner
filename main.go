@@ -23,10 +23,9 @@ func main() {
 	howmany := flag.Int("howmany", 1000000, "number of seeds to mine")
 	flag.Parse()
 
-	flag.Usage()
+	fmt.Println("\nUsage: " + filepath.Base(os.Args[0]) + " -min [minimum_depth] -max [maximum_depth] -howmany [number_of_seeds_wanted]")
 
 	fmt.Println("")
-
 	rand.Seed(time.Now().UTC().UnixNano())
 	seeds, realmin, realmax := Mine(*howmany, *min, *max)
 	SaveEMSFile(seeds, realmin, realmax)
@@ -49,7 +48,9 @@ func SaveEMSFile(seeds seedpack, min, max int) {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	outfilename := filepath.Join(dir, strconv.Itoa(min)+"-"+strconv.Itoa(max)+"_"+fmt.Sprintf("%x", string(md5[:]))+".ems")
 	outfile, err := os.OpenFile(outfilename, os.O_RDWR|os.O_CREATE, 0644)
-	fmt.Println(err)
+	if err != nil {
+		panic(err)
+	}
 
 	outfile = outfile
 
@@ -92,7 +93,7 @@ func Mine(howmany, min, max int) (seedpack, int, int) {
 	startTime := time.Now()
 	relstartTime := time.Now()
 	updateInterval := 1
-	fmt.Println("Commencing mining of seeds with depths between "+strconv.Itoa(min)+" - "+strconv.Itoa(max)+":")
+	fmt.Println("Commencing mining of "+strconv.Itoa(howmany)+" seeds with depths between "+strconv.Itoa(min)+" - "+strconv.Itoa(max)+":")
 
 	b := 2.00 * 2.00
 
@@ -163,10 +164,14 @@ IterateZDone:
 				relfound = 0
 				relstartTime = time.Now()
 			} else {
-				hours := int(math.Floor(time.Since(startTime).Seconds())) / 3600
-				minutes := (int(math.Floor(time.Since(startTime).Seconds())) - (hours * 3600)) / 60
-				seconds := int(math.Floor(time.Since(startTime).Seconds())) - (hours * 3600) - (minutes * 60)
-				fmt.Println("After " + strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s, "+ strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" have been found so far. ("+strconv.Itoa(int(math.Round(float64(found)/time.Since(startTime).Seconds())))+" sps)")
+				totalseconds := int(math.Floor(time.Since(startTime).Seconds()))
+				sps := int(math.Round(float64(found)/float64(totalseconds)))
+				totalseconds = int((float64(howmany) - float64(found)) / float64(sps))
+				hours := totalseconds / 3600
+				minutes := (totalseconds - (hours * 3600)) / 60
+				seconds := totalseconds - (hours * 3600) - (minutes * 60)
+
+				fmt.Println(strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" have been found so far. "+ strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s"+" left at current speed of "+strconv.Itoa(sps)+" sps.")
 				relfound = 0
 				relstartTime = time.Now()
 			}
@@ -179,10 +184,13 @@ IterateZDone:
 	}
 	/**** Outer Loop Ceases ****/
 
-	hours := int(math.Floor(time.Since(startTime).Seconds())) / 3600
-	minutes := (int(math.Floor(time.Since(startTime).Seconds())) - (hours * 3600)) / 60
-	seconds := int(math.Floor(time.Since(startTime).Seconds())) - (hours * 3600) - (minutes * 60)
-	fmt.Println("After " + strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s, "+ strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" have been found so far. ("+strconv.Itoa(int(math.Round(float64(found)/time.Since(startTime).Seconds())))+" sps)")
+	totalseconds := int(math.Floor(time.Since(startTime).Seconds()))
+	hours := totalseconds / 3600
+	minutes := (totalseconds - (hours * 3600)) / 60
+	seconds := totalseconds - (hours * 3600) - (minutes * 60)
+	sps := int(math.Round(float64(found)/float64(totalseconds)))
+
+	fmt.Println(strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" have been found after "+ strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s"+" with an overall speed of "+strconv.Itoa(sps)+" sps.")
 
 	return seeds, realmin, realmax
 }
