@@ -2,7 +2,7 @@ package main
 
 /*****************************************************************************
  *  EMSMiner mines ectocopial Mandelbrot seeds used to create Anthropobrots. *
- *  Copyright (C) 2020 Daïm Aggott-Hönsch                                    *
+ *  Copyright © 2020 Daïm Aggott-Hönsch                                      *
  *                                                                           *
  *  This program is free software: you can redistribute it and/or modify     *
  *  it under the terms of the GNU General Public License as published by     *
