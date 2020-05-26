@@ -269,20 +269,21 @@ func GenerateGuidemap(size int) *Guidemap {
 
 	startTime := time.Now()
 	found := 0
-	limmin := 128
+	limmin := 32
 	limmax := limmin * 2
-	for time.Since(startTime).Seconds() < 5 {
+	for time.Since(startTime).Seconds() < 60 {
 
 		z := complex(0.00, 0.00)
 		c := complex(rand.Float64()*4-2, rand.Float64()*2)
 
-		for idx := 0; idx < limmax; idx++ {
+		for idx := 0; idx < limmax+2; idx++ {
 			z = z*z + c
 			if cmplx.Abs(z) > 2 {
 				if idx >= limmin {
 					found++
-					if found % 256 == 0 {
+					if found % (1000) == 0 {
 						limmax *= 2
+						limmin *= 2
 					}
 					this.Mark(c)
 				}
