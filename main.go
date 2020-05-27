@@ -41,7 +41,7 @@ func main() {
 	howmany := flag.Int("howmany", 1000000, "number of seeds to mine")
 	flag.Parse()
 
-	fmt.Println("\nEMSMiner v0.1 Copyright (C) 2020 Daïm Aggott-Hönsch. This program comes with ABSOLUTELY NO WARRANTY.")
+	fmt.Println("\nEMSMiner v0.2 Copyright (C) 2020 Daïm Aggott-Hönsch. This program comes with ABSOLUTELY NO WARRANTY.")
 	fmt.Println("This is free software, and you are welcome to redistribute it under the conditions specified by")
 	fmt.Println("the GNU General Public License 3 (https://www.gnu.org/licenses/gpl-3.0).")
 
