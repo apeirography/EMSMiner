@@ -193,7 +193,7 @@ IterateZDone:
 				minutes := (totalseconds - (hours * 3600)) / 60
 				seconds := totalseconds - (hours * 3600) - (minutes * 60)
 
-				fmt.Println(strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" have been found so far. "+ strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s"+" left at current speed of "+strconv.Itoa(int(sps*60*60))+" sph.")
+				fmt.Println(strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" found so far. "+ strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s"+" left at current rate of "+strconv.Itoa(int(sps*60*60))+" sph.")
 				relfound = 0
 				relstartTime = time.Now()
 			}
@@ -210,9 +210,9 @@ IterateZDone:
 	hours := totalseconds / 3600
 	minutes := (totalseconds - (hours * 3600)) / 60
 	seconds := totalseconds - (hours * 3600) - (minutes * 60)
-	sps := int(math.Round(float64(found)/float64(totalseconds)))
+	sps := float64(found)/float64(totalseconds)
 
-	fmt.Println(strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" have been found after "+ strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s"+" with an overall speed of "+strconv.Itoa(int(sps*60*60))+" sph.")
+	fmt.Println(strconv.Itoa(found) + " seeds with depths between "+strconv.Itoa(min) + " - " + strconv.Itoa(max)+" found after "+ strconv.Itoa(hours) +"h "+strconv.Itoa(minutes)+"m " +strconv.Itoa(seconds) +"s"+" with an overall speed of "+strconv.Itoa(int(sps*60*60))+" sph.")
 
 	return seeds, realmin, realmax
 }
@@ -309,6 +309,21 @@ func GenerateGuidemap(size int) *Guidemap {
 	*/
 
 	return this
+}
+
+func (this *Guidemap) Print() {
+	fmt.Println("")
+	for idx := 0; idx < len(this.itsData); idx++ {
+		if idx % this.itsWidth == 0 {
+			fmt.Print("\n")
+		}
+		if this.itsData[idx] {
+			fmt.Print("O")
+		} else {
+			fmt.Print("-")
+		}
+	}
+	fmt.Print("\n")
 }
 
 func (this *Guidemap) Mark(c complex128) {
